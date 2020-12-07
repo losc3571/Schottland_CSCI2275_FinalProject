@@ -18,6 +18,7 @@ AlphabetGraph::~AlphabetGraph(){
 void AlphabetGraph::buildGraph(){
     string alphabet = "abcdefghijklmnopqrstuvwxyz";
     startingLetter.clear();
+    //Add each letter of alphabet to startingLetter vectore
     for(int i = 0; i < alphabet.length(); i++){
         vertex *temp = new vertex;
         temp->name = alphabet.at(i);
@@ -36,6 +37,7 @@ void AlphabetGraph::addWord(string word){
                  vertex *temp2 = findNextVertex(temp, word.at(i));
                  temp = temp2;
          }
+    //Add special node
     addFinishNode(temp);
 }
 
@@ -66,6 +68,7 @@ void AlphabetGraph::addEdge(vertex *a, vertex *b, int weight){
     adjVertex *temp = new adjVertex;
     temp->v = b;
     temp->weight = weight;
+    //Only need one way edges because acts like tree
     a->adj.push_back(*temp);
 }
 
@@ -86,9 +89,12 @@ string AlphabetGraph::guessWord(string word){
     if (word == ""){
         return "";
     }
+    //Parse current guess into letters
     char c = word.at(0);
     string start(1,c);
     vertex *temp = findVertexStarting(start);
+    //This loop moves through tree so that guess starts from vertex
+    //based off of the letters that the user has already entered
     for(int i = 1; i < word.length(); i++){
         char nex = word.at(i);
         string next(1,nex);  
@@ -105,6 +111,7 @@ string AlphabetGraph::guessWord(string word){
             return "";
         }
     }
+    //This loop adds letters to guess
     while(temp->name != ""){
         int biggestI = 0;
         int biggest = 0;
@@ -124,4 +131,81 @@ string AlphabetGraph::guessWord(string word){
         temp = temp->adj[biggest].v;
     }
     return result;
+}
+
+void AlphabetGraph::printMostCommonOfLetter(std::string letter){
+    string result = letter;
+    vertex *temp = findVertexStarting(letter);
+    while(temp->name != ""){
+        int biggestI = 0;
+        int biggest = 0;
+        for (int i = 0; i < temp->adj.size(); i++){
+            if(temp->adj[i].weight > biggestI){
+                biggest = i;
+                biggestI = temp->adj[i].weight;
+            }
+        }
+        //Fix this
+        if (temp->adj.size() == 0){
+            cout << "I don't know any words that start with this letter." << endl;
+            return;
+        }
+        
+        result += temp->adj[biggest].v->name;
+        temp = temp->adj[biggest].v;
+    }
+    cout << "The most common word starting with " << letter << " is " << result << "." << endl;
+}
+
+void AlphabetGraph::randomWord(){
+    //Keep in mind that random will repeat the same thing
+    //unless you give it a new seed
+    int a = rand() % startingLetter.size();
+    string result;
+    vertex *temp = &startingLetter[a];
+    result += temp->name;
+    while (temp->name != ""){
+        if(temp->adj.size() == 0){
+            randomWord();
+            return;
+        }
+        int b = rand() % temp->adj.size();
+        result += temp->adj[b].v->name;
+        temp = temp->adj[b].v;
+    }
+    cout << "Your random word is " << result << "." << endl;
+}
+
+void AlphabetGraph::clearGraph(){
+    //Clears nodes to a null node
+    for(int i = 0; i < startingLetter.size(); i++){
+        vertex *a = new vertex;
+        startingLetter[i] = *a;
+    }
+}
+
+void AlphabetGraph::printNumberOfNodes(){
+    //Iterates through each node recursively 
+    int num = 0;
+    for(int i = 0; i < startingLetter.size(); i++){
+       num++;
+       printNumberOfNodesHelper(&startingLetter[i], num);
+    }
+    cout << "The total number of nodes is " << num << endl;
+}
+int AlphabetGraph::printNumberOfNodesHelper(vertex *root, int &total){
+    if(root->adj.size() == 0){
+        return 1;
+    }
+    for(int i = 0; i < root->adj.size(); i++){
+        printNumberOfNodesHelper(root->adj[i].v, total);
+        (*&total)++;
+    }
+    return 1;
+}
+
+void AlphabetGraph::displayStart(){
+    for(int i = 0; i < startingLetter.size(); i++){
+        cout << startingLetter[i].name << endl;
+    }
 }
