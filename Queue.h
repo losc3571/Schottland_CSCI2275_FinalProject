@@ -9,11 +9,12 @@ public:
     Queue(int);
     //~Queue(){};
     //circular queue methods
-    bool enqueue(std::string word);
+    bool enqueue(std::string word); 
     std::string dequeue();
-    void printQueue(); 
+    void printQueue(); //prints queue but mostly for debugging not used in actual program
     bool queueIsFull(); 
-    bool queueIsEmpty(); 
+    bool queueIsEmpty();
+    void printCurrentlyQueuedWords(); //prints words awaiting in queue in program
     
 protected:
 private:
