@@ -69,22 +69,29 @@ int main(int argc, char *argv[]){
                 //This will make a guess using the graph
                 string correct;
                 string attempt = myGraph.guessWord(guess);
-                cout << "My guess is " << attempt << endl;
+                if (attempt != ""){
+                    cout << "My guess is " << attempt << endl;
+                }
                 //Asking if the guess is correct is used to know what word the user was actually thinking of 
                 //so that when they dequeue to train tree later it will train the tree based off of the words
                 //they were actually thinking of
-                cout << "Is this correct? Type y/n" << endl;
-                cin >> correct;
-                if(correct == "y" || correct == "Y"){
-                    //Enqueue to train with becaue it was correct
-                    myQ.enqueue(attempt);
-                }
-                else if (correct == "n" || correct == "N"){
-                    //Enqueues what user was actually thinking of so that the program can learn this word for subsequent attempts
-                    string intended;
-                    cout << "Please enter the word you were thinking of ";
-                    cin >> intended;
-                    myQ.enqueue(intended);
+                if (attempt != ""){
+                    cout << "Is this correct? Type y/n" << endl;
+                    cin >> correct;
+                    if(correct == "y" || correct == "Y"){
+                        //Enqueue to train with becaue it was correct
+                        myQ.enqueue(attempt);
+                    }
+                    else if (correct == "n" || correct == "N"){
+                        //Enqueues what user was actually thinking of so that the program can learn this word for subsequent attempts
+                        string intended;
+                        cout << "Please enter the word you were thinking of ";
+                        cin >> intended;
+                        myQ.enqueue(intended);
+                    }
+                    else{
+                        cout << "Input was not y or n, returning to main menu" << endl;
+                    }
                 }
                 guess = "";
                 break;

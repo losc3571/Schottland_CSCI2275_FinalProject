@@ -93,6 +93,10 @@ string AlphabetGraph::guessWord(string word){
     char c = word.at(0);
     string start(1,c);
     vertex *temp = findVertexStarting(start);
+    if (temp == NULL){
+        cout << "Error, check guess" << endl;
+        return "";
+    }
     //This loop moves through tree so that guess starts from vertex
     //based off of the letters that the user has already entered
     for(int i = 1; i < word.length(); i++){
@@ -136,6 +140,10 @@ string AlphabetGraph::guessWord(string word){
 void AlphabetGraph::printMostCommonOfLetter(std::string letter){
     string result = letter;
     vertex *temp = findVertexStarting(letter);
+    if (temp == NULL){
+        cout << "Character not recognized, remember to use lowercase letters." << endl;
+        return;
+    }
     while(temp->name != ""){
         int biggestI = 0;
         int biggest = 0;
